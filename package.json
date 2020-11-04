@@ -1,0 +1,29 @@
+{
+  "name": "tfdata",
+  "version": "0.0.1",
+  "description": "Data with timeframe",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Jitta",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^26.6.3"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.0",
+    "lodash.get": "^4.4.2",
+    "lodash.last": "^3.0.0",
+    "lodash.pick": "^4.4.0",
+    "moment": "^2.29.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jitta-intel/tfdata.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jitta-intel/tfdata/issues"
+  },
+  "homepage": "https://github.com/jitta-intel/tfdata#readme"
+}
