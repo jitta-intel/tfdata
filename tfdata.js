@@ -310,6 +310,7 @@ class TFdata {
       if (targetValue == null) {
         kv[key] = null
       } else {
+        delete targetValue.group
         kv[key] = options.lean ? targetValue.v : targetValue
         lastValue = targetValue
       }
