@@ -1408,6 +1408,117 @@ describe('TFdata', () => {
     })
   })
 
+
+  describe('getValuesForCalendarKey', () => {
+    test('should return empty array if no values matched', () => {
+      const data = new TFdata('quarterly', [
+        { fk: '2016Q1', seen: ck('2016Q1'), v: 1 },
+        { fk: '2016Q2', seen: ck('2016Q2'), v: 2 },
+        { fk: '2016Q3', seen: ck('2016Q3'), v: 3 },
+        { fk: '2016Q4', seen: ck('2016Q4'), v: 4 },
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5 },
+        { fk: '2017Q2', seen: ck('2017Q2'), v: 6 },
+        { fk: '2017Q3', seen: ck('2017Q3'), v: 7 },
+        { fk: '2017Q4', seen: ck('2017Q4'), v: 8 },
+        { fk: '2018Q1', seen: ck('2018Q1'), v: 9 }
+      ])
+      const selectedCalendarKey = '2015Q1'
+
+
+
+      expect(data.getValuesForCalendarKey(selectedCalendarKey)).toEqual([])
+    })
+
+    test('should return matched values as array', () => {
+      const data = new TFdata('quarterly', [
+        { fk: '2016Q1', seen: ck('2016Q1'), v: 1 },
+        { fk: '2016Q2', seen: ck('2016Q2'), v: 2 },
+        { fk: '2016Q3', seen: ck('2016Q3'), v: 3 },
+        { fk: '2016Q4', seen: ck('2016Q4'), v: 4 },
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5 },
+        { fk: '2017Q2', seen: ck('2017Q2'), v: 6 },
+        { fk: '2017Q3', seen: ck('2017Q3'), v: 7 },
+        { fk: '2017Q4', seen: ck('2017Q4'), v: 8 },
+        { fk: '2018Q1', seen: ck('2018Q1'), v: 9 }
+      ])
+      const selectedCalendarKey = '2016Q2'
+
+
+      expect(data.getValuesForCalendarKey(selectedCalendarKey)).toEqual([
+        { fk: '2016Q2', seen: ck('2016Q2'), v: 2, ck: '2016Q2' }
+      ])
+    })
+
+
+    test('should return matched values as array', () => {
+      const data = new TFdata('annually', [
+        { fk: '2016', seen: ck('2016Q1'), v: 1 },
+        { fk: '2016', seen: ck('2016Q2'), v: 2 },
+        { fk: '2016', seen: ck('2016Q3'), v: 3 },
+        { fk: '2016', seen: ck('2016Q4'), v: 4 },
+        { fk: '2017', seen: ck('2017Q1'), v: 5 },
+        { fk: '2017', seen: ck('2017Q2'), v: 6 },
+        { fk: '2017', seen: ck('2017Q3'), v: 7 },
+        { fk: '2017', seen: ck('2017Q4'), v: 8 },
+      ])
+      const selectedCalendarKey = '2016'
+
+      expect(data.getValuesForCalendarKey(selectedCalendarKey)).toEqual([
+        { fk: '2016', seen: ck('2016Q1'), v: 1, ck: '2016' },
+        { fk: '2016', seen: ck('2016Q2'), v: 2, ck: '2016' },
+        { fk: '2016', seen: ck('2016Q3'), v: 3, ck: '2016' },
+        { fk: '2016', seen: ck('2016Q4'), v: 4, ck: '2016' },
+      ])
+    })
+  })
+
+
+  describe('getValuesUntilCalendarKey', () => {
+    test('should return all values if selected calendary key is later date from data ', () => {
+      const data = new TFdata('quarterly', [
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5 },
+        { fk: '2017Q2', seen: ck('2017Q2'), v: 6 },
+        { fk: '2017Q3', seen: ck('2017Q3'), v: 7 },
+        { fk: '2017Q4', seen: ck('2017Q4'), v: 8 },
+        { fk: '2018Q1', seen: ck('2018Q1'), v: 9 }
+      ])
+      const selectedCalendarKey = '2019Q1'
+
+
+      expect(data.getValuesUntilCalendarKey(selectedCalendarKey)).toEqual([
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5, ck: '2017Q1' },
+        { fk: '2017Q2', seen: ck('2017Q2'), v: 6, ck: '2017Q2' },
+        { fk: '2017Q3', seen: ck('2017Q3'), v: 7, ck: '2017Q3' },
+        { fk: '2017Q4', seen: ck('2017Q4'), v: 8, ck: '2017Q4' },
+        { fk: '2018Q1', seen: ck('2018Q1'), v: 9, ck: '2018Q1' }
+      ])
+    })
+
+    test('should return all values before and equal selected calendarKey', () => {
+      const data = new TFdata('quarterly', [
+        { fk: '2016Q1', seen: ck('2016Q1'), v: 1 },
+        { fk: '2016Q2', seen: ck('2016Q2'), v: 2 },
+        { fk: '2016Q3', seen: ck('2016Q3'), v: 3 },
+        { fk: '2016Q4', seen: ck('2016Q4'), v: 4 },
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5 },
+        { fk: '2017Q2', seen: ck('2017Q2'), v: 6 },
+        { fk: '2017Q3', seen: ck('2017Q3'), v: 7 },
+        { fk: '2017Q4', seen: ck('2017Q4'), v: 8 },
+        { fk: '2018Q1', seen: ck('2018Q1'), v: 9 }
+      ])
+      const selectedCalendarKey = '2017Q1'
+
+      expect(data.getValuesUntilCalendarKey(selectedCalendarKey)).toEqual([
+        { fk: '2016Q1', seen: ck('2016Q1'), v: 1, ck: '2016Q1' },
+        { fk: '2016Q2', seen: ck('2016Q2'), v: 2, ck: '2016Q2' },
+        { fk: '2016Q3', seen: ck('2016Q3'), v: 3, ck: '2016Q3' },
+        { fk: '2016Q4', seen: ck('2016Q4'), v: 4, ck: '2016Q4' },
+        { fk: '2017Q1', seen: ck('2017Q1'), v: 5, ck: '2017Q1' },
+      ])
+    })
+  })
+
+
   describe('quarterlyCagr()', () => {
     test('calculation', () => {
       const data = new TFdata('annually', [

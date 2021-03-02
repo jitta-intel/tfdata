@@ -172,6 +172,20 @@ class TFdata {
     return filtered
   }
 
+  getValuesUntilCalendarKey(ck) {
+    if (this.isTimeless()) {
+      return this.data
+    }
+
+    const keyType = util.scopeKeyType(ck)
+
+    const filtered = this.data.map((datum) => {
+      datum.ck = util.dateToNormalizeScopeKey(datum.seen, keyType)
+      return datum
+    }).filter(datum => datum.ck <= ck)
+    return filtered
+  }
+
   getValueForCalendarKey(ck) {
     if (this.isTimeless()) {
       return this.data
