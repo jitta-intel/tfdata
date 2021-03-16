@@ -113,14 +113,24 @@ class TFdata {
     return filtered.slice(-1)[0]
   }
 
-  getValueForDate(date) {
+  getValueForDate(date, { beforeDate } = {}) {
     if (this.isTimeless()) {
       return this.data
     }
 
     const filtered = this.data.filter(unit => unit.seen <= date)
     if (filtered.length === 0) return null
-    return _.last(filtered)
+    const value = _.last(filtered)
+    if (beforeDate) {
+      if (moment(value.seen).diff(beforeDate) >= 0) {
+        return value
+      }
+      return {
+        v: null,
+        seen: date
+      }
+    }
+    return value
   }
 
 

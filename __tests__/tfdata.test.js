@@ -325,6 +325,41 @@ describe('TFdata', () => {
       const result = tfdata.getValueForDate(new Date('2016-01-01'))
       expect(result).toEqual(expectedResult)
     })
+
+    test('should check date and return value if latest data is in beforeDate', () => {
+      const expectedResult = {
+        v: 1,
+        seen: ck('2015Q3'),
+        fk: '2015Q3'
+      }
+      const data = {
+        _type: 'quarterly',
+        _values: [
+          { v: 1, seen: ck('2015Q3'), fk: '2015Q3' },
+          { v: 4, seen: ck('2016Q1'), fk: '2016Q1' }
+        ]
+      }
+      const tfdata = new TFdata(data._type, data._values)
+      const result = tfdata.getValueForDate(new Date('2016-01-01'), { beforeDate: new Date('2015-09-30') })
+      expect(result).toEqual(expectedResult)
+    })
+
+    test('should check date and return null if latest data is outdated', () => {
+      const expectedResult = {
+        v: null,
+        seen: new Date('2016-01-01'),
+      }
+      const data = {
+        _type: 'quarterly',
+        _values: [
+          { v: 1, seen: ck('2015Q3'), fk: '2015Q3' },
+          { v: 4, seen: ck('2016Q1'), fk: '2016Q1' }
+        ]
+      }
+      const tfdata = new TFdata(data._type, data._values)
+      const result = tfdata.getValueForDate(new Date('2016-01-01'), { beforeDate: new Date('2015-10-31') })
+      expect(result).toEqual(expectedResult)
+    })
   })
 
   describe('toKeyValue()', () => {
