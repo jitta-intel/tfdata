@@ -508,7 +508,7 @@ module.exports = util = {
     dates = [];
     while (currentMoment.toDate() < to) {
       dates.push(currentMoment.toDate());
-      currentMoment = currentMoment.add(1, momentType).endOf(momentType);
+      currentMoment = currentMoment.add(1, momentType).endOf(momentType).startOf('day');
     }
     return dates;
   },

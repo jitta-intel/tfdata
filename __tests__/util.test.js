@@ -646,4 +646,19 @@ testKey;
       expect(result).toBe(-13)
     })
   })
+
+  describe('generateDates', () => {
+    test('result in end of period dates', () => {
+      const scope = 'quarterly'
+      const a = new Date('2017-01-01')
+      const b = new Date('2018-02-01')
+      const result = util.generateDates(a, b, scope)
+      expect(result).toEqual([
+        new Date('2017-03-31'),
+        new Date('2017-06-30'),
+        new Date('2017-09-30'),
+        new Date('2017-12-31'),
+      ])
+    })
+  })
 })
