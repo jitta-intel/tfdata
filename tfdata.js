@@ -276,7 +276,7 @@ class TFdata {
         break;
       case 'fiscal':
         // skip convert if scope is the same
-        const fromScope = util.scopeKeyType(this.data[0].fk)
+        const fromScope = this.data[0] ? util.scopeKeyType(this.data[0].fk) : null
         if (fromScope === scopeType) {
           dataWithGroup = this.data.map((datum) => {
             return { ...datum, group: datum.fk }
