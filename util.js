@@ -39,9 +39,16 @@ const AVAILABLE_SCOPES = [
   'timeless'
 ]
 
+const START_YEAR = '2000'
 
-module.exports = util = {
 
+const util = {
+  keysByScope: {
+    annually: [],
+    quarterly: [],
+    monthly: [],
+    daily: []
+  },
   /**
    * Set value
    * @param {Object} obj      Object to set value of
@@ -546,11 +553,31 @@ module.exports = util = {
     return _last(correctScopeKeys)
   },
 
+  // generate from past to now
+  getKeysByScope(scope) {
+    if (this.keysByScope[scope].length === 0) {
+      const startDate = moment(START_YEAR)
+      const keys = []
+      let curentdateMom = moment(startDate)
+      const endDateMom = moment()
+
+      const period = SCOPE_TO_SUFFIX[scope]
+      const format = SCOPE_TO_KEY_FORMAT[scope]
+      while (!curentdateMom.isAfter(endDateMom)) {
+        keys.push(curentdateMom.format(format))
+        curentdateMom.add(1, period)
+      }
+      this.keysByScope[scope] = keys
+    }
+    return this.keysByScope[scope]
+  },
+
   // potential bottleneck function (probably impossible to optimize)
   keysInRange(startKey, endKey) {
     const safeStartKey = util.normalizeKey(startKey)
     const safeEndKey = util.normalizeKey(endKey)
-
+    const scope = util.scopeKeyType(safeStartKey)
+    // const scope = 'quarterly'
     if (!util.isSameKeyType(safeStartKey, safeEndKey)) {
       throw new Error(`Mismatch key type: ${startKey} and ${endKey}`)
     }
@@ -562,14 +589,8 @@ module.exports = util = {
       return []
     }
 
-    const keys = []
-    let nextKey = safeStartKey
-    const scope = util.scopeKeyType(nextKey)
-    let i =0
-    while (nextKey <= safeEndKey) {
-      keys.push(nextKey)
-      nextKey = util.addNormalizedScopeKey(nextKey, 1, scope)
-    }
+    let keys = this.getKeysByScope(scope)
+    keys = keys.filter(key => key >= safeStartKey && key <= safeEndKey)
     return keys
   },
 
@@ -707,3 +728,6 @@ module.exports = util = {
     return monthDiff
   },
 }
+
+
+module.exports = util

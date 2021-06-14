@@ -287,6 +287,27 @@ describe('TFdata', () => {
     })
   })
 
+  describe('getValuesForFiscalKey()', () => {
+    test('returns an object', () => {
+      const expectedResult = {
+        v: 3,
+        seen: ck('2015Q4'),
+        fk: '2015Q4'
+      }
+      const data = {
+        _type: 'quarterly',
+        _values: [
+          { v: 1, seen: ck('2015Q3'), fk: '2015Q3' },
+          expectedResult,
+          { v: 4, seen: ck('2016Q1'), fk: '2016Q1' }
+        ]
+      }
+      const tfdata = new TFdata(data._type, data._values)
+      const result = tfdata.getValueForFiscalKey('2015Q4')
+      expect(result).toEqual(expectedResult)
+    })
+  })
+
   describe('getValueForDate()', () => {
     test('default', () => {
       const expectedResult = {
@@ -373,7 +394,6 @@ describe('TFdata', () => {
         ]
       }
       const tfdata = new TFdata(data._type, data._values)
-
       const obj = tfdata.toKeyValue()
       expect(obj).toEqual({
         '2015-12': 3,
@@ -1380,6 +1400,7 @@ describe('TFdata', () => {
           { v: 16, seen: ck('2015Q3'), fk: '2015Q1' },
         ]
       }
+
       const tfdata = new TFdata(data._type, data._values)
       const result = tfdata.ttm()
       expect(result).toEqual(58)

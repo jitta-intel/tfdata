@@ -1,6 +1,6 @@
 {
   "name": "tfdata",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Data with timeframe",
   "main": "index.js",
   "scripts": {

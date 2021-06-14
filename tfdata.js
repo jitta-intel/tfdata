@@ -3,13 +3,15 @@ const _ = require('lodash')
 const Table = require('cli-table3')
 const moment = require('moment')
 
-
 const groupBy = (xs, key) => {
   return xs.reduce((rv, x) => {
     (rv[x[key]] = rv[x[key]] || []).push(x)
     return rv
   }, {})
 }
+
+
+
 
 class TFdata {
   constructor(scopeType, data, options = {}) {
@@ -24,7 +26,7 @@ class TFdata {
       result.seen = new Date(result.seen)
       result.ed = result.ed ? new Date(result.ed) : undefined
       return result
-    })
+    }) || []
 
     this.isTTM = options.isTTM || false
 
@@ -168,6 +170,16 @@ class TFdata {
     return _.last(filtered)
   }
 
+  getValuesForFiscalKey(fk, { fiscalOrder = 'last' } = {}) {
+    if (this.isTimeless()) {
+      return this.data
+    }
+
+    const filtered = this.data.filter(unit => unit.fk === fk)
+    if (filtered.length === 0) return null
+    return filtered
+  }
+
   getValuesForCalendarKey(ck) {
     if (this.isTimeless()) {
       return this.data
@@ -254,7 +266,6 @@ class TFdata {
       lean: true,
       forwardFill: false
     }, _options)
-
     let dataWithGroup = []
     switch (mode) {
       case 'calendar':
@@ -264,10 +275,18 @@ class TFdata {
         })
         break;
       case 'fiscal':
-        dataWithGroup = this.data.map((datum) => {
-          const group = util.convertKey(datum.fk, scopeType)
-          return { ...datum, group }
-        })
+        // skip convert if scope is the same
+        const fromScope = util.scopeKeyType(this.data[0].fk)
+        if (fromScope === scopeType) {
+          dataWithGroup = this.data.map((datum) => {
+            return { ...datum, group: datum.fk }
+          })
+        } else {
+          dataWithGroup = this.data.map((datum) => {
+            const group = util.convertKey(datum.fk, scopeType)
+            return { ...datum, group }
+          })
+        }
         break;
       default:
         throw new Error(`Unsupported mode (${mode})`)
@@ -295,6 +314,7 @@ class TFdata {
     //   return groupByresult
     // })
 
+
     const nonNullKeys = Object.keys(groupByKey).filter(datum => datum !== 'null')
     const keys = Array.from(new Set(nonNullKeys.sort()))
     const minKey = keys[0]
@@ -313,7 +333,7 @@ class TFdata {
     if (minKey == null || maxKey == null || minKey == 'null' || maxKey == 'null') {
       return {}
     }
-    // bottleneck potential
+
     const filledKeys = util.keysInRange(minKey, maxKey)
     let lastValue = null
     filledKeys.forEach((key) => {
