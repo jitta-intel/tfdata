@@ -554,6 +554,85 @@ testKey;
       const result = util.convertKey(null, 'quarterly')
       expect(result).toEqual(null)
     })
+
+    describe('from annually', () => {
+      test('convert annually to annually', () => {
+        const result = util.convertKey('2018', 'annually')
+        expect(result).toEqual('2018')
+      })
+      test('convert annually to quarterly', () => {
+        const result = util.convertKey('2018', 'quarterly')
+        expect(result).toEqual('2018Q4')
+      })
+      test('convert annually to monthly', () => {
+        const result = util.convertKey('2018', 'monthly')
+        expect(result).toEqual('2018-12')
+      })
+      test('convert annually to daily', () => {
+        const result = util.convertKey('2018', 'daily')
+        expect(result).toEqual('2018-12-31')
+      })
+    })
+
+
+    describe('from quarterly', () => {
+      test('convert quarterly to annually', () => {
+        const result = util.convertKey('2018Q1', 'annually')
+        expect(result).toEqual('2018')
+      })
+      test('convert quarterly to quarterly', () => {
+        const result = util.convertKey('2018Q1', 'quarterly')
+        expect(result).toEqual('2018Q1')
+      })
+      test('convert quarterly to monthly', () => {
+        const result = util.convertKey('2018Q2', 'monthly')
+        expect(result).toEqual('2018-6')
+      })
+      test('convert quarterly to daily', () => {
+        const result = util.convertKey('2018Q2', 'daily')
+        expect(result).toEqual('2018-6-30')
+      })
+    })
+
+
+    describe('from monthly', () => {
+      test('convert monthly to annually', () => {
+        const result = util.convertKey('2018-3', 'annually')
+        expect(result).toEqual('2018')
+      })
+      test('convert monthly to quarterly', () => {
+        const result = util.convertKey('2018-3', 'quarterly')
+        expect(result).toEqual('2018Q1')
+      })
+      test('convert monthly to monthly', () => {
+        const result = util.convertKey('2018-3', 'monthly')
+        expect(result).toEqual('2018-3')
+      })
+      test('convert monthly to daily', () => {
+        const result = util.convertKey('2018-3', 'daily')
+        expect(result).toEqual('2018-3-31')
+      })
+    })
+
+
+    describe('from daily', () => {
+      test('convert daily to annually', () => {
+        const result = util.convertKey('2018-3-15', 'annually')
+        expect(result).toEqual('2018')
+      })
+      test('convert daily to quarterly', () => {
+        const result = util.convertKey('2018-3-15', 'quarterly')
+        expect(result).toEqual('2018Q1')
+      })
+      test('convert daily to monthly', () => {
+        const result = util.convertKey('2018-3-15', 'monthly')
+        expect(result).toEqual('2018-3')
+      })
+      test('convert daily to daily', () => {
+        const result = util.convertKey('2018-3-15', 'daily')
+        expect(result).toEqual('2018-3-15')
+      })
+    })
   })
 
   describe('forwardFillObject()', () => {

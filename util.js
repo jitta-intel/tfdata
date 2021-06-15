@@ -4,8 +4,15 @@ const indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; 
 const _last = require('lodash.last')
 const _get = require('lodash.get')
 const moment = require('moment')
+// const dayjs = require('dayjs')
 const debug = require('debug')('tfdata:util')
 
+// const customParseFormat = require('dayjs/plugin/customParseFormat')
+// dayjs.extend(customParseFormat)
+// const advancedFormat = require('dayjs/plugin/advancedFormat')
+// dayjs.extend(advancedFormat)
+// const utc = require('dayjs/plugin/utc')
+// dayjs.extend(utc)
 
 const MONTH_RE = /^(\d{4})-(1[012]|0?[1-9])$/g;
 const QUARTER_RE = /^(\d{4})[Q]([1-4]{1})$/g;
@@ -192,9 +199,22 @@ const util = {
   subtractDuration(date, i, scope) {
     return util.addDuration(date, -i, scope)
   },
-  convertKey(key, toScope) {
-    const date = this.scopeKeyToDate(key)
-    return this.dateToScopeKey(date, toScope)
+  // convertKey(key, toScope) {
+  //   const date = this.scopeKeyToDate(key)
+  //   return this.dateToScopeKey(date, toScope)
+  // },
+  convertKey(key, toScope, _fromScope) {
+    if (key == null) {
+      return null
+    }
+    const fromScope = _fromScope || util.scopeKeyType(key)
+    const fromFormat = SCOPE_TO_STRING_FORMAT[fromScope]
+    const toFormat = SCOPE_TO_STRING_FORMAT[toScope]
+    const fromPeriod = SCOPE_TO_SUFFIX[fromScope]
+    return moment.utc(key, fromFormat).endOf(fromPeriod).startOf('day').format(toFormat)
+    // console.log(key, 'fromFormat',fromFormat, 'endof', fromPeriod, 'toFormat', toFormat)
+    // console.log(dayjs.utc(key, fromFormat))
+    // return dayjs.utc(key, fromFormat).endOf(fromPeriod).startOf('day').format(toFormat)
   },
   scopeToMomentTimeKey(scope) {
     if (indexOf.call(AVAILABLE_SCOPES, scope) < 0) {
@@ -556,7 +576,7 @@ const util = {
   // generate from past to now
   getKeysByScope(scope) {
     if (this.keysByScope[scope].length === 0) {
-      const startDate = moment(START_YEAR)
+      const startDate = moment(START_YEAR, 'YYYY')
       const keys = []
       let curentdateMom = moment(startDate)
       const endDateMom = moment()

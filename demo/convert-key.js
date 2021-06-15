@@ -1,6 +1,19 @@
 const TFdata = require('../tfdata')
 const util = require('../util')
 
+
+const querterKeys = util.keysInRange('1970Q1', '4000Q4')
+console.log(querterKeys)
+
+
+console.time('convertKey-quarter')
+console.log('converted', querterKeys.map(key => util.convertKey(key, 'quarterly', 'quarterly')))
+console.timeEnd('convertKey-quarter')
+
+console.time('convertKey-annual')
+console.log('converted', querterKeys.map(key => util.convertKey(key, 'annually', 'quarterly')))
+console.timeEnd('convertKey-annual')
+
 // const data = {
 //   _type: 'monthly',
 //   _values: [
@@ -38,9 +51,5 @@ const util = require('../util')
 // console.log('do it secondtime')
 // tfdata.toKeyValue()
 
-console.time('key1')
-console.log(util.keysInRange('2012', '2016'))
-console.timeEnd('key1')
-console.time('key2')
-console.log(util.keysInRange('2010', '2020'))
-console.timeEnd('key2')
+// console.log(util.keysInRange('2012', '2016'))
+// console.log(util.keysInRange('2010', '2020'))
